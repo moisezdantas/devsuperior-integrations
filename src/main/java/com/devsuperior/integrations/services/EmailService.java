@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.devsuperior.integrations.dto.EmailDTO;
-import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.devsuperior.integrations.services.exceptions.EmailException;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -43,12 +43,12 @@ public class EmailService {
 			
 			if(status >= 400 && status <= 500) {
 				LOG.error("Error sending email: " + response.getBody());
-			}else {
-				LOG.info("Email sent! Status: " + status);
+				throw new EmailException(response.getBody());
 			}
+			LOG.info("Email sent! Status: " + status);
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new EmailException(e.getMessage());
 		}
 	}
 }
